@@ -3,7 +3,6 @@ const app = require('./app');
 const mongoose = require('mongoose');
 const env = require('dotenv');
 var cors = require('cors');
-const authRoutes = require('./routes/auth')
 const bodyParser = require('body-parser') ; 
 const morgan = require('morgan') ; 
 
@@ -24,7 +23,7 @@ mongoose.connect(
 });
 
 app.use(express.json());
-app.use('/api/auth', authRoutes);
+
 
 app.listen(process.env.PORT_NUMBER, () => {
     console.log(`server started on http://localhost:${process.env.PORT_NUMBER}`);
