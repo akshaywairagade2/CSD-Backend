@@ -1,11 +1,16 @@
 const express = require('express');
-const app = express();
+const app = require('./app');
 const mongoose = require('mongoose');
 const env = require('dotenv');
 var cors = require('cors');
 const authRoutes = require('./routes/auth')
+const bodyParser = require('body-parser') ; 
+const morgan = require('morgan') ; 
 
-env.config();
+
+app.use(bodyParser.urlencoded({extended: true}))  ;  
+app.use(morgan('tiny')) ; 
+env.config({path: "D:\\CSD Backend\\CSD-Backend\\.env" });
 app.use(cors());
 app.use(express.urlencoded({ extended: false }))
 mongoose.connect(
@@ -22,7 +27,6 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 
 app.listen(process.env.PORT_NUMBER, () => {
-    console.log("Connected");
+    console.log(`server started on http://localhost:${process.env.PORT_NUMBER}`);
 })
-
 
