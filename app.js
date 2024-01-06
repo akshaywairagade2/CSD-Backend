@@ -5,7 +5,11 @@ const app = express() ;
 app.use(cookiePareser()) ; 
 app.use(express.json()) ; 
 
-const errorMiddleWare = require('./middlewares/error') ; 
+
+const authRoutes = require('./routes/auth')
+app.use('/api/auth', authRoutes);
+
+const errorMiddleWare = require('./middlewares/error') ;     
 app.use(errorMiddleWare) ; 
 
 module.exports =app ; 
