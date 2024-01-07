@@ -9,7 +9,7 @@ const morgan = require('morgan') ;
 
 app.use(bodyParser.urlencoded({extended: true}))  ;  
 app.use(morgan('tiny')) ; 
-env.config({path: "D:\\CSD Backend\\CSD-Backend\\.env" });
+env.config();
 app.use(cors());
 app.use(express.urlencoded({ extended: false }))
 mongoose.connect(
