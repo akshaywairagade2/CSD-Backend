@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const catchAsyncError = require('./catchAsyncError'); 
 
 exports.auth = catchAsyncError( async (req, res, next) => {
-  try {
+  
     const token = req.headers.authorization.split(" ")[1];
     const isCustomAuth = token.length < 500;
 
@@ -10,10 +10,11 @@ exports.auth = catchAsyncError( async (req, res, next) => {
 
     if (token && isCustomAuth) {      
         const decodeData =  jwt.verify(token , process.env.JWT_SECRET) ;  
-     
+        console.log("customAuth") ; 
         req.userID= decodeData?.id ; 
         next() ; 
-    } else {
+    } 
+    else {
       decodedData = jwt.decode(token);
 
       req.userID = decodedData?.sub;
@@ -21,7 +22,5 @@ exports.auth = catchAsyncError( async (req, res, next) => {
     }    
 
   } 
-  catch (error) {
-    console.log(error);
-  }
-});
+  
+);

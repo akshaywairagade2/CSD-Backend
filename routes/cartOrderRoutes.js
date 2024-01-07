@@ -5,9 +5,9 @@ const { auth } = require('../middlewares/auth');
 
 
 
-router.route('/add').post( cartOrder.addToCart) ; 
-router.route('/remove').post( cartOrder.removeToCart) ;      
-router.route('/cart/:id').get( cartOrder.getCart) ; 
-router.route('/cart/:id').delete(cartOrder.deleteCart); 
+router.route('/add').post(auth ,  cartOrder.addToCart) ; 
+router.route('/remove').post( auth , cartOrder.removeToCart) ;      
+router.route('/cart/:id').get( auth , cartOrder.getCart) ; 
+router.route('/cart/:id').delete(auth , cartOrder.deleteCart); 
 
 module.exports = router;
