@@ -3,15 +3,10 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const nodemailer = require("nodemailer");
+const axios = require("axios")
 
+exports.signup = async (req, res) => {
 
-
-
-
-
-
-exports.signup = async (req, res) => { 
-     
     if (req.body.googleAccessToken) {
 
         const data = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -42,7 +37,7 @@ exports.signup = async (req, res) => {
             const token = jwt.sign({
                 email: user.emailId,
                 id: user._id
-            }, process.env.JWT_SECRET , { expiresIn: "4h" })
+            }, process.env.JWT_SECRET, { expiresIn: "4h" })
 
             res.status(201).json({
                 msg: "User Created Successfully",
@@ -82,7 +77,7 @@ exports.signup = async (req, res) => {
         const token = jwt.sign({
             email: user.emailId,
             id: user._id
-        }, process.env.JWT_SECRET , { expiresIn: "4h" })
+        }, process.env.JWT_SECRET, { expiresIn: "4h" })
 
         if (user) {
             return res.status(201).json({
@@ -123,7 +118,7 @@ exports.login = async (req, res) => {
             const token = jwt.sign({
                 email: user.emailId,
                 id: user._id
-            }, process.env.JWT_SECRET , { expiresIn: "4h" })
+            }, process.env.JWT_SECRET, { expiresIn: "4h" })
 
 
             return res.status(201).json({
@@ -161,7 +156,7 @@ exports.login = async (req, res) => {
                 const token = jwt.sign({
                     email: user.emailId,
                     id: user._id
-                }, process.env.JWT_SECRET , { expiresIn: "4h" })
+                }, process.env.JWT_SECRET, { expiresIn: "4h" })
 
                 return res.status(201).json({
                     msg: "You Loggedin Successfully",
@@ -214,7 +209,7 @@ exports.forgotpassword = async (req, res) => {
         const user = await User.findOne({ emailId });
         if (user) {
 
-            const secret = process.env.JWT_SECRET  + user.hashPassword;
+            const secret = process.env.JWT_SECRET + user.hashPassword;
             const token = jwt.sign({ email: user.emailId, id: user._id }, secret, {
                 expiresIn: "5m"
             })
@@ -260,7 +255,7 @@ exports.resetpassword = async (req, res) => {
         return res.status(400).json({ msg: "User Not Found" });
     }
 
-    const secret = process.env.JWT_SECRET  + user.hashPassword;
+    const secret = process.env.JWT_SECRET + user.hashPassword;
     try {
         const verify = jwt.verify(token, secret);
         res.render("resetpassword", { email: verify.email, status: "Not Verified" })
@@ -278,7 +273,7 @@ exports.resetpassworddone = async (req, res) => {
         return res.status(400).json({ msg: "User Not Found" });
     }
 
-    const secret = process.env.JWT_SECRET  + user.hashPassword;
+    const secret = process.env.JWT_SECRET + user.hashPassword;
     try {
         const verify = jwt.verify(token, secret);
         const hashPassword = await bcrypt.hash(password, 10);

@@ -3,12 +3,12 @@ const app = require('./app');
 const mongoose = require('mongoose');
 const env = require('dotenv');
 var cors = require('cors');
-const bodyParser = require('body-parser') ; 
-const morgan = require('morgan') ; 
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
 
 
-app.use(bodyParser.urlencoded({extended: true}))  ;  
-app.use(morgan('tiny')) ; 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('tiny'));
 env.config();
 app.use(cors());
 app.use(express.urlencoded({ extended: false }))
@@ -21,6 +21,12 @@ mongoose.connect(
 ).then(() => {
     console.log(`Database Connected`);
 });
+
+
+app.options("*", cors({ origin: 'http://localhost:3000', optionsSuccessStatus: 200 }));
+
+app.use(cors({ origin: "http://localhost:3000", optionsSuccessStatus: 200 }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 app.use(express.json());
 

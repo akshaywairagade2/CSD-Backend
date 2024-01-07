@@ -15,15 +15,15 @@ const userSchema = new mongoose.Schema({
         trim: true,
         unique: true,
         lowercase: true
-    },  
+    },
     hashPassword: {
         type: String,
         required: false,
     },
-    role:{
-        type : String,
-        required:true,
-    }
+    // role:{
+    //     type : String,
+    //     required:true,
+    // }
 }, { timestaps: true })
 
 userSchema.methods = {
