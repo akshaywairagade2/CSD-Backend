@@ -3,15 +3,16 @@ const catchAsyncError = require('./catchAsyncError');
 
 exports.auth = catchAsyncError(async (req, res, next) => {
 
-  console.log(req, "req")
+
   const token = req.headers.authorization.split(" ")[1];
   const isCustomAuth = token.length < 500;
 
   let decodedData;
-  console.log(token, "token")
+
   if (token && isCustomAuth) {
-    const decodeData = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("customAuth");
+
+    const decodeData = await jwt.verify(token, process.env.JWT_SECRET);
+
     req.userID = decodeData?.id;
     next();
   }

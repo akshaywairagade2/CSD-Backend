@@ -1,8 +1,6 @@
 const cartOrder = require('../models/cartOrders');
 const ErrorHandler = require('../utils/errorhandler');
 const catchAsyncError = require('../middlewares/catchAsyncError');
-const user = require('../models/user');
-const mongoose = require('mongoose');
 
 
 exports.addToCart = catchAsyncError(
@@ -11,19 +9,18 @@ exports.addToCart = catchAsyncError(
             const { hotelID, item } = req.body;
             const userID = req.userID;
 
-            console.log(hotelID, item, "huihui")
+            var cart = await cartOrder.findOne({ userID: userID, hotelID: hotelID });
 
-            const cart = await cartOrder.findOne({ userID: userID, hotelID: hotelID });
             if (!cart) {
-                await cartOrder.create({
+
+                cart = await cartOrder.create({
                     userID: userID,
                     hotelID: hotelID,
                     orderItems: [],
                 })
             }
-            console.log("here")
-            await cart.addItem(item);
 
+            await cart.addItem(item);
             res.status(200).send({ success: true, message: "added Successfully", ...cart });
         }
 
@@ -39,13 +36,6 @@ exports.removeToCart = catchAsyncError(
         const userID = req.userID;
 
         const cart = await cartOrder.findOne({ userID: userID, hotelID: hotelID });
-        if (!cart) {
-            await cartOrder.create({
-                userID: userID,
-                hotelID: hotelID,
-                orderItems: [],
-            })
-        }
         try {
             await cart.removeItem(item);
             const orderItems = cart?.orderItems;
@@ -65,11 +55,11 @@ exports.getCart = async (req, res, next) => {
     const userID = req.userID;
     const cart = await cartOrder.find({ userID: userID, hotelID: hotelID });
 
-    const orderItems = cart[0].orderItems;
-    if (!cart) {
-        res.status(200).send({ message: "cart not found", cart: [] });
+    if (cart.length == 0) {
+        res.status(200).send({ message: "cart not found", items: [] });
     }
     else {
+        const orderItems = cart[0]?.orderItems;
         res.status(200).send({ message: "cart found", items: orderItems });
     }
 }

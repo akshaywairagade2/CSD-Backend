@@ -25,7 +25,7 @@ const cartOrderSchema = new mongoose.Schema(
                 type: Number,
                 required: true,
             },
-            item: {
+            _id: {
                 type: String,
                 // ref : "Item",
                 required: true,
@@ -39,20 +39,22 @@ const cartOrderSchema = new mongoose.Schema(
 
 cartOrderSchema.methods.addItem = function (item) {
     // Check if the item already exists in the cart
-    const existingItem = this.orderItems.find(orderItem => orderItem.item == (item.item));
+    const existingItem = this.orderItems.find(orderItem => orderItem?._id == (item?._id));
+
 
     if (existingItem) {
         // If the item exists, update the quantity
         existingItem.quantity += 1;
     } else {
         // If the item doesn't exist, add it to the cart 
-        console.log("creating a new item");
+
         this.orderItems.push({
             name: item.name,
             price: item.price,
             quantity: 1,
-            item: item._id
+            _id: item._id
         });
+
     }
 
     // Save the changes to the cart order
@@ -61,15 +63,15 @@ cartOrderSchema.methods.addItem = function (item) {
 
 cartOrderSchema.methods.removeItem = function (item) {
     // Find the index of the item in the orderItems array
-    console.log(item, "item")
-    const itemIndex = this.orderItems.findIndex(orderItem => orderItem.item == (item.item));
-    console.log(itemIndex, "itemIndex")
+
+    const itemIndex = this.orderItems.findIndex(orderItem => orderItem?._id == (item._id));
+
 
     if (itemIndex !== -1) {
         // If the item is found, decrease the quantity
-        console.log(this.orderItems[itemIndex].quantity, "1")
+
         this.orderItems[itemIndex].quantity -= 1;
-        console.log(this.orderItems[itemIndex].quantity, "2")
+
         // If the quantity becomes zero, remove the item from the cart
         if (this.orderItems[itemIndex].quantity <= 0) {
             this.orderItems.splice(itemIndex, 1);
