@@ -1,26 +1,26 @@
 const jwt = require('jsonwebtoken');
-const catchAsyncError = require('./catchAsyncError'); 
+const catchAsyncError = require('./catchAsyncError');
 
-exports.auth = catchAsyncError( async (req, res, next) => {
-  
-    const token = req.headers.authorization.split(" ")[1];
-    const isCustomAuth = token.length < 500;
+exports.auth = catchAsyncError(async (req, res, next) => {
 
-    let decodedData;
+  console.log(req, "req")
+  const token = req.headers.authorization.split(" ")[1];
+  const isCustomAuth = token.length < 500;
 
-    if (token && isCustomAuth) {      
-        const decodeData =  jwt.verify(token , process.env.JWT_SECRET) ;  
-        console.log("customAuth") ; 
-        req.userID= decodeData?.id ; 
-        next() ; 
-    } 
-    else {
-      decodedData = jwt.decode(token);
+  let decodedData;
+  console.log(token, "token")
+  if (token && isCustomAuth) {
+    const decodeData = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("customAuth");
+    req.userID = decodeData?.id;
+    next();
+  }
+  else {
+    decodedData = jwt.decode(token);
+    req.userID = decodedData?.sub;
+    next();
+  }
 
-      req.userID = decodedData?.sub;
-      next();
-    }    
+}
 
-  } 
-  
 );
