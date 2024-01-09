@@ -61,12 +61,22 @@ cartOrderSchema.methods.addItem = function (item) {
     return this.save();
 };
 
+cartOrderSchema.methods.deleteItem =  function(itemID){ 
+      const itemIndex =  this.orderItems.findIndex(orderItem => orderItem?._id == itemID) ; 
+      if(itemIndex){ 
+            this.orderItems.splice(itemIndex , 1) ; 
+            return this.save() ; 
+      }  
+      return Promise.resolve(this) ; 
+
+
+}
 cartOrderSchema.methods.removeItem = function (item) {
     // Find the index of the item in the orderItems array
 
     const itemIndex = this.orderItems.findIndex(orderItem => orderItem?._id == (item._id));
 
-
+     console.log(itemIndex) ; 
     if (itemIndex !== -1) {
         // If the item is found, decrease the quantity
 
