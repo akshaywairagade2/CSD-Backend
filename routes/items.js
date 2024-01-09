@@ -4,8 +4,8 @@ const {addItem, getItems, deleteItem, updateItem} = require('./../controllers/it
 const router  = express.Router() ; 
 
 router.post('/additem', addItem);
-router.post('/getitems', getItems);
-router.post('/deleteitem', deleteItem);
+router.get('/getitems', getItems);
+router.delete('/deleteitem', deleteItem);
 router.post('/updateitem', updateItem);
 
 module.exports = router;

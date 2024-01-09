@@ -28,7 +28,7 @@ exports.addItem = async (req, res) => {
         return res.status(201).json({
             msg: "Item Added Successfully",
             Item: {
-                _id: item.itemId,
+                _id: item._id,
             },
         });
     }
@@ -39,25 +39,23 @@ exports.addItem = async (req, res) => {
 
 exports.getItems = async (req, res) => {
 
-    const { itemId } = req.params;
-    if (itemId) {
-        Items.findOne({ _id: itemId })
-            .exec((error, item) => {
-                if (error) return res.status(400).json({ error });
-                if (item) {
-                    res.status(200).json({ product });
-                }
-            })
+    // const { itemId } = req.params;
+    try {
+        const items = await Items.find();
+        return res.status(201).json({
+            "msg": "Items sent",
+            "items": items
+        })
     }
-    else {
-        return res.status(400).json({ error: 'Params Required' });
+    catch(error) {
+        return res.status(400).json({ error: error });
     }
 };
 
 exports.deleteItem = async (req, res) => {
     const itemId = req.body.itemId;
     try {
-        const item = await Items.findOneAndDelete({ itemId: itemId });
+        const item = await Items.findOneAndDelete({ _id: itemId });
         return res.status(200).json({
             msg: "Item Deleted Successfully",
 
@@ -69,32 +67,36 @@ exports.deleteItem = async (req, res) => {
 
 exports.updateItem = async (req, res) => {
 
-    const itemId = req.body.itemId;
-    const updatedName = req.body.name;
-    const updatedhotelId = req.body.hotelId;
-    const updatedPrice = req.body.price;
-    const updatedImageLink = req.body.imageLink;
-    const updatedQuantity = req.body.quantity;
-    const updatedAvailabilityStatus = req.body.availabilityStatus;
-    const updatedDescription = req.body.description;
+    const {
+        _id,
+        name,
+        hotelId,
+        price,
+        imageLink,
+        quantity,
+        availabilityStatus,
+        description,
+    } = req.body;
 
     try {
-        await Items.findByIdAndUpdate(itemId, {
-
-            name: updatedName,
-            hotelId: updatedhotelId,
-            price: updatedPrice,
-            imageLink: updatedImageLink,
-            quantity: updatedQuantity,
-            availabilityStatus: updatedAvailabilityStatus,
-            description: updatedDescription
-        });
-
-        return res.status(200).json({
-            msg: "Item Updated Successfully",
-
-        });
+        const item = await Items.findOne({ _id: _id });
+        if (!item) {
+            return res.status(400).json({ msg: "Item not found" });
+        }
+        else {
+            const UpdatedItem = await Items.findByIdAndUpdate({ _id: _id }, {
+                name,
+                hotelId,
+                price,
+                imageLink,
+                quantity,
+                availabilityStatus,
+                description
+            });
+            // console.log('OrderUpdated', UpdatedItem);
+            return res.status(200).json({ msg: "Item Updated Successfully" });
+        }
     } catch (err) {
-        return res.status(400).json({ msg: "Unable to Update Item" });
+        return res.status(400).json({ err:err, msg: "Unable to Update Item" });
     }
 };
