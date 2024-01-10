@@ -45,14 +45,15 @@ app.use(function (req, res, next) {
 const authRoutes = require('./routes/auth')
 const cartRoutes = require('./routes/cartOrderRoutes');
 const itemRoutes = require('./routes/items');
+const orderRoutes = require('./routes/orders')
+
 app.use('/api/auth', authRoutes);
 app.use('/api/v1', cartRoutes);
 app.use('/api/items', itemRoutes);
-
-
-
-const orderRoutes = require('./routes/orders')
 app.use('/api/orders', orderRoutes);
+
+
+
 
 const errorMiddleWare = require('./middlewares/error');
 app.use(errorMiddleWare);

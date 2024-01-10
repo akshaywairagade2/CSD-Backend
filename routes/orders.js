@@ -1,7 +1,7 @@
-const express  = require('express') ; 
-const {addOrder, acceptOrder, rejectOrder, deliveredOrder} = require('./../controllers/orders')
+const express = require('express');
+const { addOrder, acceptOrder, rejectOrder, deliveredOrder } = require('./../controllers/orders')
 
-const router  = express.Router() ; 
+const router = express.Router();
 
 router.post('/addOrder', addOrder);
 router.post('/acceptOrder', acceptOrder);

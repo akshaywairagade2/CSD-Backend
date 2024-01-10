@@ -25,7 +25,7 @@ const orderSchema = new mongoose.Schema({
                 type: String,
                 required: true,
             },
-            item: {
+            itemID: {
                 type: String,
                 // ref: "Item",
                 required: true,
@@ -42,4 +42,4 @@ const orderSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Orders' , orderSchema) ; 
+module.exports = mongoose.model('Orders', orderSchema); 

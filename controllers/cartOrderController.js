@@ -74,23 +74,23 @@ exports.deleteCart = catchAsyncError(async (req, res, next) => {
     const cart = await cartOrder.findOneAndDelete({ userID: userID, hotelID: hotelID });
 
     res.status(202).send({ success: true, message: "cart deleted", cart: cart });
-})  
+})
 
 
-exports.removeFromCart = catchAsyncError(async(req , res , next)=>{ 
-       const itemID = req.query.itemID ;     
-       const hotelID  = req.query.hotelID ; 
-       const userID = req.userID ; 
-       var cart = await cartOrder.findOne({userID : userID , hotelID : hotelID})   ; 
-     if(cart){ 
-          await   cart.deleteItem(itemID) ;   
-          res.status(200).send({success: true , message: "removed from cart Successfully" , ...cart}) ; 
-     }   
-     else{ 
-          res.status(401).send({  
-               success: false ,
-               message: "item ID not found in the request" ,  
-          })
-     }
+exports.removeFromCart = catchAsyncError(async (req, res, next) => {
+    const itemID = req.query.itemID;
+    const hotelID = req.query.hotelID;
+    const userID = req.userID;
+    var cart = await cartOrder.findOne({ userID: userID, hotelID: hotelID });
+    if (cart) {
+        await cart.deleteItem(itemID);
+        res.status(200).send({ success: true, message: "removed from cart Successfully", ...cart });
+    }
+    else {
+        res.status(401).send({
+            success: false,
+            message: "item ID not found in the request",
+        })
+    }
 
 })

@@ -1,10 +1,10 @@
-const Orders=require('../models/orders')
+const Orders = require('../models/orders')
 
-exports.addOrder = async (req, res) =>{
-    const {userId, hotelId, cartItems} = req.body;
+exports.addOrder = async (req, res) => {
+    const { userId, hotelId, cartItems } = req.body;
     const orderAcceptOrDecline = "NULL";
     const orderStatus = "NULL";
-    const order=await Orders.create({
+    const order = await Orders.create({
         userId,
         hotelId,
         cartItems,
@@ -12,7 +12,7 @@ exports.addOrder = async (req, res) =>{
         orderStatus,
     });
 
-    if (order){
+    if (order) {
         return res.status(201).json({
             msg: "Order Placed Successfully",
             User: {
@@ -20,14 +20,14 @@ exports.addOrder = async (req, res) =>{
             },
         });
     }
-    else{
+    else {
         return res.status(400).json({ msg: "Unable to Accept Order" });
     }
 }
 
-exports.acceptOrder = async (req, res) =>{
-    const {orderId} = req.body;
-    try{
+exports.acceptOrder = async (req, res) => {
+    const { orderId } = req.body;
+    try {
         const order = await Orders.findOne({ _id: orderId });
         if (!order) {
             return res.status(400).json({ msg: "Order not found" });
@@ -35,21 +35,21 @@ exports.acceptOrder = async (req, res) =>{
         else {
             const UpdatedOrder = await Orders.findByIdAndUpdate({ _id: orderId }, {
                 orderAcceptOrDecline: "Accepted",
-                orderStatus:"Processed",
+                orderStatus: "Processed",
             });
             console.log('OrderUpdated', UpdatedOrder);
             return res.status(200).json({ msg: "Order Accepted Successfully" });
         }
     }
     catch (error) {
-        return res.status(400).json({ msg: "Something wrong"});
+        return res.status(400).json({ msg: "Something wrong" });
     }
-    
+
 }
 
-exports.rejectOrder = async (req, res) =>{
-    const {orderId} = req.body;
-    try{
+exports.rejectOrder = async (req, res) => {
+    const { orderId } = req.body;
+    try {
         const order = await Orders.findOne({ _id: orderId });
         if (!order) {
             return res.status(400).json({ msg: "Order not found" });
@@ -63,26 +63,26 @@ exports.rejectOrder = async (req, res) =>{
         }
     }
     catch (error) {
-        return res.status(400).json({ msg: "Something wrong"});
-    }  
+        return res.status(400).json({ msg: "Something wrong" });
+    }
 }
 
-exports.deliveredOrder = async (req, res) =>{
-    const {orderId} = req.body;
-    try{
+exports.deliveredOrder = async (req, res) => {
+    const { orderId } = req.body;
+    try {
         const order = await Orders.findOne({ _id: orderId });
         if (!order) {
             return res.status(400).json({ msg: "Order not found" });
         }
         else {
             const UpdatedOrder = await Orders.findByIdAndUpdate({ _id: orderId }, {
-                orderStatus:"Delivered",
+                orderStatus: "Delivered",
             });
             console.log('OrderUpdated', UpdatedOrder);
             return res.status(200).json({ msg: "Order Delivered Successfully" });
         }
     }
     catch (error) {
-        return res.status(400).json({ msg: "Something wrong"});
-    }  
+        return res.status(400).json({ msg: "Something wrong" });
+    }
 }
