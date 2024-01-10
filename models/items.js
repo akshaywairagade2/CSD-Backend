@@ -37,12 +37,12 @@ const itemSchema = new mongoose.Schema({
     },
     reviews: [
         {
-            type: Number,
+            type: String,
             required: false,
         }
     ],
 
-       
+
 })
 
-module.exports = mongoose.model('Items' , itemSchema) ; 
+module.exports = mongoose.model('Items', itemSchema); 

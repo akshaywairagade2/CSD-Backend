@@ -1,11 +1,11 @@
-const express  = require('express') ; 
-const {addItem, getItems, deleteItem, updateItem} = require('./../controllers/items')
+const express = require('express');
+const { addItem, getItems, deleteItem, updateItem } = require('./../controllers/items')
 
-const router  = express.Router() ; 
+const router = express.Router();
 
 router.post('/additem', addItem);
 router.get('/getitems', getItems);
-router.delete('/deleteitem', deleteItem);
+router.post('/deleteitem', deleteItem);
 router.post('/updateitem', updateItem);
 
 module.exports = router;

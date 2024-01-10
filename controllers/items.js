@@ -1,36 +1,18 @@
 const Items = require('../models/items')
 
 exports.addItem = async (req, res) => {
-    const {
-        name,
-        hotelId,
-        price,
-        imageLink,
-        quantity,
-        availabilityStatus,
-        description,
-    } = req.body;
+    const { name, hotelId, price, imageLink, quantity, availabilityStatus, description } = req.body;
+
+    console.log(name, hotelId)
+
     const rating = 0;
     const reviews = [];
-    const item = await Items.create({
-        name,
-        hotelId,
-        price,
-        imageLink,
-        quantity,
-        availabilityStatus,
-        description,
-        rating,
-        reviews
-    });
 
     try {
-        return res.status(201).json({
-            msg: "Item Added Successfully",
-            Item: {
-                _id: item._id,
-            },
-        });
+
+        const item = await Items.create({ name, hotelId, price, imageLink, quantity, availabilityStatus, description, rating, reviews });
+        return res.status(201).json({ msg: "Item Added Successfully", Item: { _id: item._id, }, });
+
     }
     catch {
         return res.status(400).json({ msg: "Unable to Add Item" });
@@ -47,13 +29,14 @@ exports.getItems = async (req, res) => {
             "items": items
         })
     }
-    catch(error) {
+    catch (error) {
         return res.status(400).json({ error: error });
     }
 };
 
 exports.deleteItem = async (req, res) => {
     const itemId = req.body.itemId;
+    console.log(itemId, "itemid")
     try {
         const item = await Items.findOneAndDelete({ _id: itemId });
         return res.status(200).json({
@@ -97,6 +80,6 @@ exports.updateItem = async (req, res) => {
             return res.status(200).json({ msg: "Item Updated Successfully" });
         }
     } catch (err) {
-        return res.status(400).json({ err:err, msg: "Unable to Update Item" });
+        return res.status(400).json({ err: err, msg: "Unable to Update Item" });
     }
 };
