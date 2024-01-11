@@ -63,10 +63,9 @@ cartOrderSchema.methods.addItem = function (item) {
 };
 
 cartOrderSchema.methods.deleteItem = function (itemID) {
-    console.log(itemID)
-    console.log(this.orderItems)
+
     const itemIndex = this.orderItems.findIndex(orderItem => orderItem?.itemID == itemID);
-    console.log(itemIndex)
+
     if (itemIndex !== -1) {
         this.orderItems.splice(itemIndex, 1);
         return this.save();

@@ -15,7 +15,7 @@ exports.addOrder = async (req, res) => {
     if (order) {
         return res.status(201).json({
             msg: "Order Placed Successfully",
-            User: {
+            order: {
                 _id: order._id,
             },
         });
