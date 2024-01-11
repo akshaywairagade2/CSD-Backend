@@ -39,7 +39,8 @@ const cartOrderSchema = new mongoose.Schema(
 
 cartOrderSchema.methods.addItem = function (item) {
     // Check if the item already exists in the cart
-    const existingItem = this.orderItems.find(orderItem => orderItem?._id == (item?._id));
+    // console.log(item)
+    const existingItem = this.orderItems.find(orderItem => (orderItem?.itemID == (item?.itemID)) || (orderItem?.itemID == (item?._id)));
 
 
     if (existingItem) {
@@ -52,7 +53,7 @@ cartOrderSchema.methods.addItem = function (item) {
             name: item.name,
             price: item.price,
             quantity: 1,
-            _id: item._id
+            itemID: item._id
         });
 
     }
@@ -62,8 +63,11 @@ cartOrderSchema.methods.addItem = function (item) {
 };
 
 cartOrderSchema.methods.deleteItem = function (itemID) {
-    const itemIndex = this.orderItems.findIndex(orderItem => orderItem?._id == itemID);
-    if (itemIndex) {
+    console.log(itemID)
+    console.log(this.orderItems)
+    const itemIndex = this.orderItems.findIndex(orderItem => orderItem?.itemID == itemID);
+    console.log(itemIndex)
+    if (itemIndex !== -1) {
         this.orderItems.splice(itemIndex, 1);
         return this.save();
     }
@@ -72,11 +76,12 @@ cartOrderSchema.methods.deleteItem = function (itemID) {
 
 }
 cartOrderSchema.methods.removeItem = function (item) {
-    // Find the index of the item in the orderItems array
+    // Find the index of the item in the orderItems arraym
+    // console.log(item)
 
-    const itemIndex = this.orderItems.findIndex(orderItem => orderItem?._id == (item._id));
+    const itemIndex = this.orderItems.findIndex(orderItem => (orderItem?.itemID == (item?.itemID)) || (orderItem?.itemID == (item?._id)));
 
-    console.log(itemIndex);
+    // console.log(itemIndex);
     if (itemIndex !== -1) {
         // If the item is found, decrease the quantity
 

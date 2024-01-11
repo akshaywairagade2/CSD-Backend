@@ -37,7 +37,7 @@ exports.acceptOrder = async (req, res) => {
                 orderAcceptOrDecline: "Accepted",
                 orderStatus: "Processed",
             });
-            console.log('OrderUpdated', UpdatedOrder);
+            // console.log('OrderUpdated', UpdatedOrder);
             return res.status(200).json({ msg: "Order Accepted Successfully" });
         }
     }
@@ -58,7 +58,7 @@ exports.rejectOrder = async (req, res) => {
             const UpdatedOrder = await Orders.findByIdAndUpdate({ _id: orderId }, {
                 orderAcceptOrDecline: "Rejected",
             });
-            console.log('OrderUpdated', UpdatedOrder);
+            // console.log('OrderUpdated', UpdatdO/rder);
             return res.status(200).json({ msg: "Order Rejected Successfully" });
         }
     }
@@ -78,7 +78,7 @@ exports.deliveredOrder = async (req, res) => {
             const UpdatedOrder = await Orders.findByIdAndUpdate({ _id: orderId }, {
                 orderStatus: "Delivered",
             });
-            console.log('OrderUpdated', UpdatedOrder);
+
             return res.status(200).json({ msg: "Order Delivered Successfully" });
         }
     }
