@@ -22,7 +22,7 @@ exports.signup = async (req, res) => {
 
 
             const userExists = await User.findOne({ emailId });
-
+            const role = "user";
 
             if (userExists) {
                 res.status(400).json({ msg: "User already exist" });
@@ -31,7 +31,8 @@ exports.signup = async (req, res) => {
             const user = await User.create({
                 userName,
                 emailId,
-                hashPassword
+                hashPassword,
+                role
             });
 
             const token = jwt.sign({
@@ -45,6 +46,7 @@ exports.signup = async (req, res) => {
                     _id: user._id,
                     username: user.userName,
                     emailId: user.emailId,
+                    role: user.role
                 },
                 Token: { token }
             });
@@ -66,12 +68,13 @@ exports.signup = async (req, res) => {
         if (userExists) {
             return res.status(400).json({ msg: "User already exist" });
         }
-
+        const role = "user";
         const hashPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
             userName,
             emailId,
             hashPassword,
+            role
         });
 
         const token = jwt.sign({
@@ -86,6 +89,7 @@ exports.signup = async (req, res) => {
                     _id: user._id,
                     username: user.userName,
                     emailId: user.emailId,
+                    role: user.role
                 },
                 Token: token
             });
@@ -127,6 +131,7 @@ exports.login = async (req, res) => {
                     _id: user._id,
                     username: user.userName,
                     emailId: user.emailId,
+                    role: user.role
                 },
                 Token: { token }
             });
@@ -164,6 +169,7 @@ exports.login = async (req, res) => {
                         _id: user._id,
                         userName: user.userName,
                         emailId: user.emailId,
+                        role: user.role
                     },
                     Token: { token }
                 });
