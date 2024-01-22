@@ -86,3 +86,35 @@ exports.deliveredOrder = async (req, res) => {
         return res.status(400).json({ msg: "Something wrong" });
     }
 }
+
+exports.getOrderByUser = async(req,res) =>{
+    const {userId} = req.body
+    try{
+        const userOrders = await Orders.find({ userId: userId});
+        if (!userOrders){
+            return res.status(400).json({msg: "No such user exists"});
+        }
+        else{
+            return res.status(201).json({msg: "Orders fetched successfully", userOrders:userOrders});
+        }
+    }
+    catch (error){
+        return res.status(400).json({ msg: "Something went wrong", err:error});
+    }
+}
+
+exports.getOrderByHotel = async(req,res) =>{
+    const {hotelId} = req.body
+    try{
+        const hotelOrders = await Orders.find({ hotelId: hotelId});
+        if (!hotelOrders){
+            return res.status(400).json({msg: "No such user exists"});
+        }
+        else{
+            return res.status(201).json({msg: "Orders fetched successfully", hotelOrders:hotelOrders});
+        }
+    }
+    catch (error){
+        return res.status(400).json({ msg: "Something went wrong", err:error});
+    }
+}
