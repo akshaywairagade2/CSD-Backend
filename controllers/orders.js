@@ -1,12 +1,14 @@
 const Orders = require('../models/orders')
 
 exports.addOrder = async (req, res) => {
-    const { userId, hotelId, cartItems } = req.body;
+    const { userId, hotelId, cartItems, hotelName, userName } = req.body;
     const orderAcceptOrDecline = "NULL";
-    const orderStatus = "NULL";
+    const orderStatus = "Pending";
     const order = await Orders.create({
         userId,
         hotelId,
+        hotelName,
+        userName,
         cartItems,
         orderAcceptOrDecline,
         orderStatus,
@@ -87,34 +89,34 @@ exports.deliveredOrder = async (req, res) => {
     }
 }
 
-exports.getOrderByUser = async(req,res) =>{
-    const {userId} = req.body
-    try{
-        const userOrders = await Orders.find({ userId: userId});
-        if (!userOrders){
-            return res.status(400).json({msg: "No such user exists"});
+exports.getOrderByUser = async (req, res) => {
+    const { userId } = req.body
+    try {
+        const userOrders = await Orders.find({ userId: userId });
+        if (!userOrders) {
+            return res.status(400).json({ msg: "No such user exists" });
         }
-        else{
-            return res.status(201).json({msg: "Orders fetched successfully", userOrders:userOrders});
+        else {
+            return res.status(201).json({ msg: "Orders fetched successfully", userOrders: userOrders });
         }
     }
-    catch (error){
-        return res.status(400).json({ msg: "Something went wrong", err:error});
+    catch (error) {
+        return res.status(400).json({ msg: "Something went wrong", err: error });
     }
 }
 
-exports.getOrderByHotel = async(req,res) =>{
-    const {hotelId} = req.body
-    try{
-        const hotelOrders = await Orders.find({ hotelId: hotelId});
-        if (!hotelOrders){
-            return res.status(400).json({msg: "No such user exists"});
+exports.getOrderByHotel = async (req, res) => {
+    const { hotelId } = req.body
+    try {
+        const hotelOrders = await Orders.find({ hotelId: hotelId });
+        if (!hotelOrders) {
+            return res.status(400).json({ msg: "No such user exists" });
         }
-        else{
-            return res.status(201).json({msg: "Orders fetched successfully", hotelOrders:hotelOrders});
+        else {
+            return res.status(201).json({ msg: "Orders fetched successfully", hotelOrders: hotelOrders });
         }
     }
-    catch (error){
-        return res.status(400).json({ msg: "Something went wrong", err:error});
+    catch (error) {
+        return res.status(400).json({ msg: "Something went wrong", err: error });
     }
 }

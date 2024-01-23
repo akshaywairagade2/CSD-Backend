@@ -11,6 +11,16 @@ const orderSchema = new mongoose.Schema({
         // ref: 'User',
         required: true,
     },
+    hotelName: {
+        type: String,
+        // ref: 'User',
+        required: true,
+    },
+    userName: {
+        type: String,
+        // ref: 'User',
+        required: true,
+    },
     cartItems: [
         {
             name: {
