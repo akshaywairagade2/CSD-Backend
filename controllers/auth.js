@@ -396,20 +396,20 @@ exports.resetpassworddone = async (req, res) => {
     } catch (error) {
         return res.status(400).json({ msg: "Unable to Update password" });
     }
-};  
+};
 
-exports.getHotels = async (req , res, next)=>{  
-    try{
-      const hotels  = await User.find({role: "hotel" , isVerified:true} , {"hashPassword":0}) ;    
-      if( !hotels) { 
-             hotels = [] ;
-      }
-      res.status(200).send({success: true , hotels : hotels}) ; 
+exports.getHotels = async (req, res, next) => {
+    try {
+        const hotels = await User.find({ role: "hotel", isVerified: true }, { "hashPassword": 0 });
+        if (!hotels) {
+            hotels = [];
+        }
+        res.status(200).send({ success: true, hotels: hotels });
     }
-    catch (err){ 
-          res.status(500).send({ 
-              message: "internal server error", 
-              success: false , 
-          })
+    catch (err) {
+        res.status(500).send({
+            message: "internal server error",
+            success: false,
+        })
     }
 }
