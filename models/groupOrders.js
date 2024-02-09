@@ -2,17 +2,21 @@ const mongoose = require('mongoose');
 
 const groupOrderSchema = new mongoose.Schema(
     {
-        adminID: {
+        adminId: {
             type: String,
             required: true,
         },
-        hotelID: {
+        hotelId: {
             type: String,
             required: true,
         },
-        groupNumber: {
+        groupId: {
             type: Number,
             required: true,
+        },
+        groupName: {
+            type: String,
+            required: false,
         },
         userIds :[{
             type: String,
@@ -25,28 +29,22 @@ const groupOrderSchema = new mongoose.Schema(
                 },
                 userName: {
                     type: String,
-                    required: true,
                 },
                 items: [{
                     name: {
                         type: String,
-                        required: true,
                     },
                     price: {
                         type: Number,
-                        required: true,
                     },
                     quantity: {
                         type: Number,
-                        required: true,
                     },
                     itemID: {
                         type: String,
-                        required: true,
                     },
                     imageLink: {
                         type: String,
-                        required: false,
                     },
                 }],
             }],
