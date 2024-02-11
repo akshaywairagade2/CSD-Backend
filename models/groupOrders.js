@@ -1,57 +1,136 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const groupOrderSchema = new mongoose.Schema(
+const groupOrderSchema = new mongoose.Schema({
+  adminId: {
+    type: String,
+    required: true,
+  },
+  hotelId: {
+    type: String,
+    required: true,
+  },
+  groupId: {
+    type: Number,
+    required: true,
+  },
+  groupName: {
+    type: String,
+    required: false,
+  },
+  userIds: [
     {
-        adminId: {
-            type: String,
-            required: true,
+      type: String,
+    },
+  ],
+  cartItems: {
+    type: Map,
+    of: [
+      {
+        userId: {
+          type: String,
         },
-        hotelId: {
-            type: String,
-            required: true,
+        userName: {
+          type: String,
         },
-        groupId: {
-            type: Number,
-            required: true,
-        },
-        groupName: {
-            type: String,
-            required: false,
-        },
-        userIds :[{
-            type: String,
-        }],
-        cartItems: {
-            type: Map,
-            of: [{
-                userId: {
-                    type: String,
-                },
-                userName: {
-                    type: String,
-                },
-                items: [{
-                    name: {
-                        type: String,
-                    },
-                    price: {
-                        type: Number,
-                    },
-                    quantity: {
-                        type: Number,
-                    },
-                    itemID: {
-                        type: String,
-                    },
-                    imageLink: {
-                        type: String,
-                    },
-                }],
-            }],
-        },
-    }
+        items: [
+          {
+            name: {
+              type: String,
+            },
+            price: {
+              type: Number,
+            },
+            quantity: {
+              type: Number,
+            },
+            itemID: {
+              type: String,
+            },
+            imageLink: {
+              type: String,
+            },
+          },
+        ],
+      },
+    ],
+  },
+});
 
-);
+groupOrderSchema.methods.addItem = function (userId, userName, item) {
+  const cartItem = this.cartItems.get(userId);
+  if (!cartItem) {
+    this.cartItems[userId] = {
+      userId: userId,
+      userName: userName,
+      items: [
+        {
+          name: item.name,
+          price: item.price,
+          quantity: 1,
+          itemID: item.id,
+          imageLink: item.imageLink,
+        },
+      ],
+    };
+  } else {
+    const existingItem = this.cartItems[userId].items.find(
+      (Item) => Item.itemId == item.itemId
+    );
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      this.cartItems[userId].items.push({
+        name: item.name,
+        price: item.price,
+        quantity: 1,
+        itemID: item.id,
+        imageLink: item.imageLink,
+      });
+    }
+    this.save();
+    return this.cartItems[userId].items;
+  }
+};
+
+groupOrderSchema.methods.removeItem = function (userId, userName, item) {
+  const cartItem = this.cartItems.get(userId);
+  if (!cartItem) {
+    const index = this.cartItems[userId].items.findIndex(
+      (Item) => Item.id === item.id
+    );
+    if (index !== -1) {
+      this.cartItemp[index].items.quantity -= 1;
+
+      if (this.cartItemp[index].items.quantity <= 0) {
+        this.cartItemp[index].items.splice(index, 1);
+      }
+      return this.save();
+    }
+  }
+  return Promise.resolve(this);
+};
+
+groupOrderSchema.methods.deleteItem = async (userId, userName, item) => {
+  const cartItem = this.cartItem.get(userId);
+  if (!cartItem) {
+    const index = this.cartItems[userId].items.findIndex(
+      (Item) => Item.id === item.id
+    );
+    if (index !== -1) {
+      this.cartItemp[index].items.splice(index, 1);
+      return this.save();
+    }
+  }
+  return Promise.resolve(this);
+};
+
+groupOrderSchema.methods.deleteCart = async (userId, userName) => {
+  const cartItem = this.cartItems.get(userId);
+  if(cartItem) {
+       this.cartItems.delete(userId) ; 
+  }
+  return Promise.resolve(this);
+};
 
 // Example usage:
 // const GroupOrder = mongoose.model('GroupOrder', groupOrderSchema);
@@ -82,4 +161,4 @@ const groupOrderSchema = new mongoose.Schema(
 //     console.log("Order saved successfully!");
 // });
 
-module.exports = mongoose.model('GroupOrder', groupOrderSchema); 
+module.exports = mongoose.model("GroupOrder", groupOrderSchema);
