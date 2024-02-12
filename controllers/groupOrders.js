@@ -1,5 +1,8 @@
-const Groups = require('../models/groupOrders')
-
+const catchAsyncError = require('../middlewares/catchAsyncError');
+const Groups = require('../models/groupOrders') ; 
+const ErrorHandler = require('../utils/errorhandler');
+const {getItem , getCart} = require("./../services/groupCartOrder");   
+const Cart  = require("../models/cartOrders"); 
 exports.createGroup = async (req, res) => {
     const { hotelId, userName, userId, groupId, groupName } = req.body;
     const userIds = [userId];
@@ -27,6 +30,8 @@ exports.createGroup = async (req, res) => {
     }
 }
 
+
+
 exports.joinGroup = async (req, res) => {
     const { userName, userId, groupId } = req.body;
     const group = await Groups.findOne({ groupId: groupId });
@@ -46,4 +51,116 @@ exports.joinGroup = async (req, res) => {
         console.error(error);
         return res.status(500).json({ msg: error });
     }
-}
+}; 
+
+exports.addItem = catchAsyncError(async(req , res , next)=>{ 
+    const {groupId,userId, userName, item} = req.body ;   
+    const group = await Groups.findOne({groupId: groupId }) ;    
+    // console.log(group , item); 
+    if(!item){ 
+        return next(new ErrorHandler("Item not found" , 404)) ; 
+     }    
+    if(!group){ 
+        return next(new ErrorHandler("Group not found" , 404)) ; 
+     }   
+    try {
+    await group.addItem(userId, userName, item) ; 
+    // await group.save() ; 
+
+    res.status(200).send({  
+         success: true , 
+         message: "item added successfully", 
+    }); 
+
+
+    }
+    catch(err){
+        res.status(500).send({
+              message: err, 
+              success: false,  
+        })
+    }
+})
+
+exports.removeItem = catchAsyncError(async(req , res , next)=>{ 
+    const {groupId , item, userId, userName} = req.body ; 
+    const group = await Groups.findOne({groupId: groupId});  
+     if(!item){ 
+           return next(new ErrorHandler("Item not found", 404)) ; 
+     }  
+     if(!group){ 
+        return next(new ErrorHandler("Group not found" , 404)) ; 
+     }     
+     
+     try{
+     await group.removeItem(userId, userName , item);  
+     res.status(200).send({success:true , message: "Item removed successfully"});
+     }
+     catch(err){ 
+     res.status(500).send({success: false , message: "Error removing item"}) ;  
+     }
+});    
+
+exports.deleteItem = catchAsyncError(async(req , res , next)=>{ 
+    const {groupId , item, userId, userName} = req.body ; 
+    const group = await Groups.findOne({groupId: groupId});  
+     if(!item){ 
+           return next(new ErrorHandler("Item not found", 404)) ; 
+     }  
+     if(!group){ 
+        return next(new ErrorHandler("Group not found" , 404)) ; 
+     }     
+     
+     try{
+     await group.deleteItem(userId, userName , item);  
+     res.status(200).send({success:true , message: "Item deleted successfully"});
+     }
+     catch(err){ 
+     res.status(500).send({success: false , message: "Error deleting item"}) ;  
+     }
+});      
+
+
+
+
+exports.deleteCart = catchAsyncError(async(req , res , next)=>{ 
+    const {groupId , userId, userName} = req.body ; 
+    const group = await Groups.findOne({groupId: groupId});  
+
+     if(!group){ 
+        return next(new ErrorHandler("Group not found" , 404)) ; 
+     }     
+     
+     try{
+     await group.deleteCart(userId, userName);  
+     res.status(200).send({success:true , message: "Cart deleted successfully"});
+     }
+     catch(err){ 
+     res.status(500).send({success: false , message: "Error deleting Cart" , error:err}) ;  
+     }
+});    
+
+
+exports.addCartToGroup = catchAsyncError(async(req , res , next)=>{ 
+    const {groupId , cartId, userId, userName} = req.body ; 
+    const group = await Groups.findOne({groupId: groupId});    
+    const cart  = await Cart.findOne({_id: cartId}) ;   
+    
+    // console.log(groupId, userId, userName, cart )
+     if(!cart){ 
+           return next(new ErrorHandler("cart not found", 404)) ; 
+     }  
+     if(!group){ 
+        return next(new ErrorHandler("Group not found" , 404)) ; 
+     }       
+    //  console.log(group);
+     
+     try{
+     await group.addCartToGroup(cart, userId , userName);   
+    //  console.log(group); 
+     res.status(200).send({success:true , message: "Cart Added successfully"});
+     }
+     catch(err){ 
+     res.status(500).send({success: false , message: "Error Adding Cart to Group" , error: err,}) ;  
+     }
+});    
