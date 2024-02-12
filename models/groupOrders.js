@@ -57,9 +57,10 @@ const groupOrderSchema = new mongoose.Schema({
 });
 
 groupOrderSchema.methods.addItem = function (userId, userName, item) {
-  const cartItem = this.cartItems.get(userId);
+  const cartItem = this.cartItems.get(userId); 
+  // console.log(cartItem); 
   if (!cartItem) {
-    this.cartItems[userId] = {
+    (this.cartItems.get(userId))[0] = {
       userId: userId,
       userName: userName,
       items: [
@@ -72,62 +73,91 @@ groupOrderSchema.methods.addItem = function (userId, userName, item) {
         },
       ],
     };
-  } else {
-    const existingItem = this.cartItems[userId].items.find(
-      (Item) => Item.itemId == item.itemId
-    );
+  } else { 
+    // console.log("here" ,(this.cartItems.get(userId))[0].items) ;
+    const existingItem = (this.cartItems.get(userId))[0].items.find(
+      (Item) => Item.itemID == item.itemID
+    );  
+    // console.log(existingItem);
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
-      this.cartItems[userId].items.push({
+      (this.cartItems.get(userId))[0].items.push({
         name: item.name,
         price: item.price,
         quantity: 1,
-        itemID: item.id,
+        itemID: item.itemID,
         imageLink: item.imageLink,
       });
     }
-    this.save();
-    return this.cartItems[userId].items;
+    this.save().then(()=>{  
+      // console.log(this.cartItems) ;
+      return this.cartItems }) ; 
   }
+};
+
+groupOrderSchema.methods.addCartToGroup = function (cart, userId , userName) {
+  // console.log(userId);
+  this.cartItems.set( userId ,{
+    userId: userId,
+    userName: userName,
+    items: cart.orderItems
+  });
+  // console.log(this.cartItems) ;
+  this.save().then(()=>{  
+  // console.log(this.cartItems) ;
+  return this.cartItems }) ; 
 };
 
 groupOrderSchema.methods.removeItem = function (userId, userName, item) {
-  const cartItem = this.cartItems.get(userId);
-  if (!cartItem) {
-    const index = this.cartItems[userId].items.findIndex(
-      (Item) => Item.id === item.id
-    );
-    if (index !== -1) {
-      this.cartItemp[index].items.quantity -= 1;
+  const cartItem = this.cartItems.get(userId); 
+  // console.log(car)
+  if (cartItem) {
+    const index = (this.cartItems.get(userId))[0].items.findIndex(
+      (Item) => Item.itemID === item.itemID
+    ); 
+    // console.log(index) ; 
+    if (index !== -1) { 
 
-      if (this.cartItemp[index].items.quantity <= 0) {
-        this.cartItemp[index].items.splice(index, 1);
+     ( this.cartItems.get(userId))[0].items[index].quantity -= 1;
+
+      if ((this.cartItems.get(userId))[0].items[index].quantity  <= 0) {
+        (this.cartItems.get(userId))[0].items.splice(index, 1);
       }
-      return this.save();
+      this.save().then(()=>{  
+        // console.log(this.cartItems) ;
+        return this.cartItems }) ; 
     }
   }
   return Promise.resolve(this);
 };
 
-groupOrderSchema.methods.deleteItem = async (userId, userName, item) => {
-  const cartItem = this.cartItem.get(userId);
-  if (!cartItem) {
-    const index = this.cartItems[userId].items.findIndex(
-      (Item) => Item.id === item.id
+groupOrderSchema.methods.deleteItem = function (userId, userName, item) { 
+  const cartItem = this.cartItems.get(userId);  
+  // console.log("here", cartItem) ; 
+  if (cartItem) {
+    const index = (this.cartItems.get(userId))[0].items.findIndex(
+      (Item) => Item.itemID === item.itemID
     );
     if (index !== -1) {
-      this.cartItemp[index].items.splice(index, 1);
-      return this.save();
+      (this.cartItems.get(userId))[0].items.splice(index, 1);
+      this.save().then(()=>{  
+        // console.log(this.cartItems) ;
+        return this.cartItems }) ; 
     }
+    
   }
   return Promise.resolve(this);
 };
 
-groupOrderSchema.methods.deleteCart = async (userId, userName) => {
-  const cartItem = this.cartItems.get(userId);
-  if(cartItem) {
-       this.cartItems.delete(userId) ; 
+groupOrderSchema.methods.deleteCart = function (userId, userName)  {
+  const cartItem = this.cartItems.get(userId); 
+  // console.log(cartItem) ;
+  if (cartItem) {
+    this.cartItems.delete(userId); 
+    this.save().then(()=>{  
+      // console.log(this.cartItems) ;
+      return this.cartItems }) ; 
   }
   return Promise.resolve(this);
 };

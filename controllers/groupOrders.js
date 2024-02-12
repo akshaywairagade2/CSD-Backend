@@ -1,8 +1,8 @@
 const catchAsyncError = require('../middlewares/catchAsyncError');
 const Groups = require('../models/groupOrders') ; 
 const ErrorHandler = require('../utils/errorhandler');
-const {getItem} = require("./../services/groupCartOrder"); 
-
+const {getItem , getCart} = require("./../services/groupCartOrder");   
+const Cart  = require("../models/cartOrders"); 
 exports.createGroup = async (req, res) => {
     const { hotelId, userName, userId, groupId, groupName } = req.body;
     const userIds = [userId];
@@ -54,8 +54,9 @@ exports.joinGroup = async (req, res) => {
 }; 
 
 exports.addItem = catchAsyncError(async(req , res , next)=>{ 
-    const {groupId,userId, userName, item} = req.body ;  
-    const group = await Groups.findOne({groupId: groupId }) ;   
+    const {groupId,userId, userName, item} = req.body ;   
+    const group = await Groups.findOne({groupId: groupId }) ;    
+    // console.log(group , item); 
     if(!item){ 
         return next(new ErrorHandler("Item not found" , 404)) ; 
      }    
@@ -64,7 +65,7 @@ exports.addItem = catchAsyncError(async(req , res , next)=>{
      }   
     try {
     await group.addItem(userId, userName, item) ; 
-    await group.save() ; 
+    // await group.save() ; 
 
     res.status(200).send({  
          success: true , 
@@ -82,8 +83,8 @@ exports.addItem = catchAsyncError(async(req , res , next)=>{
 })
 
 exports.removeItem = catchAsyncError(async(req , res , next)=>{ 
-    const {groupId , itemId, userId, userName} = req.body ; 
-    const group = Groups.findOne({groupId: groupId});  
+    const {groupId , item, userId, userName} = req.body ; 
+    const group = await Groups.findOne({groupId: groupId});  
      if(!item){ 
            return next(new ErrorHandler("Item not found", 404)) ; 
      }  
@@ -101,8 +102,8 @@ exports.removeItem = catchAsyncError(async(req , res , next)=>{
 });    
 
 exports.deleteItem = catchAsyncError(async(req , res , next)=>{ 
-    const {groupId , itemId, userId, userName} = req.body ; 
-    const group = Groups.findOne({groupId: groupId});  
+    const {groupId , item, userId, userName} = req.body ; 
+    const group = await Groups.findOne({groupId: groupId});  
      if(!item){ 
            return next(new ErrorHandler("Item not found", 404)) ; 
      }  
@@ -119,12 +120,13 @@ exports.deleteItem = catchAsyncError(async(req , res , next)=>{
      }
 });      
 
+
+
+
 exports.deleteCart = catchAsyncError(async(req , res , next)=>{ 
-    const {groupId , itemId, userId, userName} = req.body ; 
-    const group = Groups.findOne({groupId: groupId});  
-     if(!item){ 
-           return next(new ErrorHandler("Item not found", 404)) ; 
-     }  
+    const {groupId , userId, userName} = req.body ; 
+    const group = await Groups.findOne({groupId: groupId});  
+
      if(!group){ 
         return next(new ErrorHandler("Group not found" , 404)) ; 
      }     
@@ -134,6 +136,31 @@ exports.deleteCart = catchAsyncError(async(req , res , next)=>{
      res.status(200).send({success:true , message: "Cart deleted successfully"});
      }
      catch(err){ 
-     res.status(500).send({success: false , message: "Error deleting Cart"}) ;  
+     res.status(500).send({success: false , message: "Error deleting Cart" , error:err}) ;  
+     }
+});    
+
+
+exports.addCartToGroup = catchAsyncError(async(req , res , next)=>{ 
+    const {groupId , cartId, userId, userName} = req.body ; 
+    const group = await Groups.findOne({groupId: groupId});    
+    const cart  = await Cart.findOne({_id: cartId}) ;   
+    
+    // console.log(groupId, userId, userName, cart )
+     if(!cart){ 
+           return next(new ErrorHandler("cart not found", 404)) ; 
+     }  
+     if(!group){ 
+        return next(new ErrorHandler("Group not found" , 404)) ; 
+     }       
+    //  console.log(group);
+     
+     try{
+     await group.addCartToGroup(cart, userId , userName);   
+    //  console.log(group); 
+     res.status(200).send({success:true , message: "Cart Added successfully"});
+     }
+     catch(err){ 
+     res.status(500).send({success: false , message: "Error Adding Cart to Group" , error: err,}) ;  
      }
 });    

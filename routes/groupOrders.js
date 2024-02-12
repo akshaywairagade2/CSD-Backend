@@ -6,6 +6,7 @@ const {
   removeItem,
   deleteItem,
   deleteCart,
+  addCartToGroup,
 } = require("./../controllers/groupOrders");
 
 const router = express.Router();
@@ -16,5 +17,9 @@ router.post("/groups/addItem", addItem);
 router.post("/groups/removeItem", removeItem);
 router.post("/groups/deleteItem", deleteItem);
 router.post("/groups/deleteCart", deleteCart);
+router.post("/groups/addCartToGroup",addCartToGroup ) ;   
+
+
+
 
 module.exports = router;
