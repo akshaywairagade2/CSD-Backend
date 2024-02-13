@@ -16,9 +16,11 @@ exports.createGroup = async (req, res) => {
             groupId,
             groupName, 
             userIds,
+            orderStatus,
             cartItems: new Map(),
         });
 
+        group.orderStatus.set("ORDER_PENDING")
         group.cartItems.set(userId, { userId, userName, items: cartItemsForUser });
 
         await group.save();
@@ -163,4 +165,144 @@ exports.addCartToGroup = catchAsyncError(async(req , res , next)=>{
      catch(err){ 
      res.status(500).send({success: false , message: "Error Adding Cart to Group" , error: err,}) ;  
      }
-});    
+});   
+
+
+exports.placeGroupOrder = async(req , res)=>{ 
+    const {groupId} = req.body ; 
+    try {
+        const group = await Groups.findOne({ groupId: groupId });
+        if (!group) {
+            return res.status(400).json({ msg: "Group not found" });
+        }
+        else
+        {
+            await Groups.findOneAndUpdate(
+                {
+                    groupId: groupId
+                },
+                {
+                    $set: { "orderStatus": "ORDER_PLACED" },
+                }
+            );
+            res.status(200).send({success:true , message: "Order Placed successfully"}); 
+        }   
+    }
+    catch(err){ 
+        res.status(500).send({success: false , message: "Order could not be placed" , error: err,}) ;  
+    }
+}
+
+
+exports.acceptGroupOrder = async(req , res)=> {
+    const { groupId } = req.body;
+    try {
+        const group = await Groups.findOne({ groupId: groupId });
+        if (!group) {
+            return res.status(400).json({ msg: "Group not found" });
+        }
+        else {
+            await Groups.findOneAndUpdate(
+                { 
+                    groupId: groupId 
+                }, 
+                {
+                orderStatus: "ORDER_ACCEPTED",
+                }
+            );
+
+            return res.status(200).json({ msg: "Order Accepted Successfully" });
+        }
+    }
+    catch (error) {
+        return res.status(400).json({ msg: "Order could not be accepted" });
+    }
+
+}
+
+
+exports.rejectGroupOrder = async(req , res)=> {
+    const { groupId } = req.body;
+    try {
+        const group = await Groups.findOne({ groupId: groupId });
+        if (!group) {
+            return res.status(400).json({ msg: "Group not found" });
+        }
+        else {
+            await Groups.findOneAndUpdate(
+                { 
+                    groupId: groupId 
+                }, 
+                {
+                orderStatus: "ORDER_REJECTED",
+                }
+            );
+
+            return res.status(200).json({ msg: "Order Rejected Successfully" });
+        }
+    }
+    catch (error) {
+        return res.status(400).json({ msg: "Order could not be rejected" });
+    }
+
+}
+
+exports.deliverGroupOrder = async(req , res)=> {
+    const { groupId } = req.body;
+    try {
+        const group = await Groups.findOne({ groupId: groupId });
+        if (!group) {
+            return res.status(400).json({ msg: "Group not found" });
+        }
+        else {
+            await Groups.findOneAndUpdate(
+                { 
+                    groupId: groupId 
+                }, 
+                {
+                orderStatus: "ORDER_DELIVERED",
+                }
+            );
+
+            return res.status(200).json({ msg: "Order Delivered Successfully" });
+        }
+    }
+    catch (error) {
+        return res.status(400).json({ msg: "Order could not be delivered" });
+    }
+
+}
+
+
+
+exports.getGroupOrderByUser = async (req, res) => {
+    const { userId } = req.body
+    try {
+        const userOrders = await Orders.find({ userId: userId });
+        if (!userOrders) {
+            return res.status(400).json({ msg: "No such user exists" });
+        }
+        else {
+            return res.status(201).json({ msg: "Orders fetched successfully", userOrders: userOrders });
+        }
+    }
+    catch (error) {
+        return res.status(400).json({ msg: "Something went wrong", err: error });
+    }
+}
+
+exports.getOrderByHotel = async (req, res) => {
+    const { hotelId } = req.body
+    try {
+        const hotelOrders = await Orders.find({ hotelId: hotelId });
+        if (!hotelOrders) {
+            return res.status(400).json({ msg: "No such user exists" });
+        }
+        else {
+            return res.status(201).json({ msg: "Orders fetched successfully", hotelOrders: hotelOrders });
+        }
+    }
+    catch (error) {
+        return res.status(400).json({ msg: "Something went wrong", err: error });
+    }
+}

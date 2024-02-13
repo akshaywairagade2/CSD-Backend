@@ -54,6 +54,9 @@ const groupOrderSchema = new mongoose.Schema({
       },
     ],
   },
+  orderStatus: {
+    type: String,
+  }
 });
 
 groupOrderSchema.methods.addItem = function (userId, userName, item) {
