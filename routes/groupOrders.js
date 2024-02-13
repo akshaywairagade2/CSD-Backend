@@ -23,13 +23,13 @@ router.post("/groups/addItem", addItem);
 router.post("/groups/removeItem", removeItem);
 router.post("/groups/deleteItem", deleteItem);
 router.post("/groups/deleteCart", deleteCart);
-router.post("/groups/addCartToGroup",addCartToGroup );
+router.post("/groups/addCartToGroup", addCartToGroup);
 router.post("/placeGroupOrder", placeGroupOrder);
 router.post("/acceptGroupOrder", acceptGroupOrder);
 router.post("/rejectGroupOrder", rejectGroupOrder);
-router.post("/deliverGroupOrder", deliverGroupOrder );    
-router.get("/getuserorders", getGroupOrderByUser ); 
-router.get("/gethotelorders", getGroupOrderByHotel ); 
+router.post("/deliverGroupOrder", deliverGroupOrder);
+router.post("/getusergrouporders", getGroupOrderByUser);
+router.post("/gethotelgrouporders", getGroupOrderByHotel);
 
 
 

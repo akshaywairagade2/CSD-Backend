@@ -289,46 +289,58 @@ exports.getGroupOrderByUser = async (req, res) => {
 }
 
 exports.getGroupOrderByHotel = async (req, res) => {
+
     const { hotelId } = req.body
     try {
         const hotelGroupOrders = await Groups.find({ hotelId: hotelId });
+
         if (!hotelGroupOrders) {
             return res.status(400).json({ msg: "No such user exists" });
         }
         else {
             let orders = [];
             hotelGroupOrders.forEach(group => {
-                if(group.hotelId === hotelId)
-                {
+                if (group.hotelId === hotelId) {
+
                     const userId = group.adminId;
+                    const groupName = group.groupName
+                    const groupId = group.groupId
                     let amount = 0;
                     let items = new Map();
-                    group.cartItems.forEach((key,value) => {
+                    group.cartItems.forEach((key, value) => {
                         key[0].items.forEach(item => {
                             let currItem = {
                                 name: item.name,
                                 price: item.price,
                                 quantity: item.quantity,
-                                itemID : item.itemID,
+                                itemID: item.itemID,
                                 imageLink: item.imageLink
                             }
-                            if(items.has(item.itemID))
-                            {
+                            if (items.has(item.itemID)) {
                                 currItem.quantity += items.get(item.itemID).quantity
                             }
-                            items.set(item.itemID,currItem)
-                            amount += item.price*item.quantity;
+                            items.set(item.itemID, currItem)
+                            amount += item.price * item.quantity;
                         })
                     })
-                    
+
+                    let finalitems = [];
+                    items.forEach(item => {
+                        let temp = JSON.parse(JSON.stringify(item));
+                        finalitems.push(temp);
+                    })
+
+
                     let order = {
+                        groupName: groupName,
                         userId: userId,
                         amount: amount,
-                        items: items,
-                        orderStatus: group.orderStatus
+                        items: finalitems,
+                        orderStatus: group.orderStatus,
+                        groupId: groupId
                     }
-                    
                     orders.push(order)
+
                 }
             })
 
