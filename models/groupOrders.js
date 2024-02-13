@@ -56,7 +56,7 @@ const groupOrderSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
-    default: "Not Placed"
+    default: "ORDER_PENDING"
   }
 });
 

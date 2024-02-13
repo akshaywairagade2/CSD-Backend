@@ -16,11 +16,9 @@ exports.createGroup = async (req, res) => {
             groupId,
             groupName,
             userIds,
-            // orderStatus,
             cartItems: new Map(),
         });
 
-        // group.orderStatus.set("ORDER_PENDING")
         group.cartItems.set(userId, { userId, userName, items: cartItemsForUser });
 
         await group.save();
@@ -277,12 +275,12 @@ exports.deliverGroupOrder = async (req, res) => {
 exports.getGroupOrderByUser = async (req, res) => {
     const { userId } = req.body
     try {
-        const userOrders = await Orders.find({ userId: userId });
-        if (!userOrders) {
+        const userGroups = await Groups.find({ userIds: userId });
+        if (!userGroups) {
             return res.status(400).json({ msg: "No such user exists" });
         }
         else {
-            return res.status(201).json({ msg: "Orders fetched successfully", userOrders: userOrders });
+            return res.status(201).json({ msg: "Orders fetched successfully", userGroups: userGroups });
         }
     }
     catch (error) {
@@ -290,15 +288,51 @@ exports.getGroupOrderByUser = async (req, res) => {
     }
 }
 
-exports.getOrderByHotel = async (req, res) => {
+exports.getGroupOrderByHotel = async (req, res) => {
     const { hotelId } = req.body
     try {
-        const hotelOrders = await Orders.find({ hotelId: hotelId });
-        if (!hotelOrders) {
+        const hotelGroupOrders = await Groups.find({ hotelId: hotelId });
+        if (!hotelGroupOrders) {
             return res.status(400).json({ msg: "No such user exists" });
         }
         else {
-            return res.status(201).json({ msg: "Orders fetched successfully", hotelOrders: hotelOrders });
+            let orders = [];
+            hotelGroupOrders.forEach(group => {
+                if(group.hotelId === hotelId)
+                {
+                    const userId = group.adminId;
+                    let amount = 0;
+                    let items = new Map();
+                    group.cartItems.forEach((key,value) => {
+                        key[0].items.forEach(item => {
+                            let currItem = {
+                                name: item.name,
+                                price: item.price,
+                                quantity: item.quantity,
+                                itemID : item.itemID,
+                                imageLink: item.imageLink
+                            }
+                            if(items.has(item.itemID))
+                            {
+                                currItem.quantity += items.get(item.itemID).quantity
+                            }
+                            items.set(item.itemID,currItem)
+                            amount += item.price*item.quantity;
+                        })
+                    })
+                    
+                    let order = {
+                        userId: userId,
+                        amount: amount,
+                        items: items,
+                        orderStatus: group.orderStatus
+                    }
+                    
+                    orders.push(order)
+                }
+            })
+
+            return res.status(201).json({ msg: "Orders fetched successfully", hotelOrders: orders });
         }
     }
     catch (error) {
