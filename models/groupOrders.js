@@ -56,11 +56,12 @@ const groupOrderSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
+    default: "Not Placed"
   }
 });
 
 groupOrderSchema.methods.addItem = function (userId, userName, item) {
-  const cartItem = this.cartItems.get(userId); 
+  const cartItem = this.cartItems.get(userId);
   // console.log(cartItem); 
   if (!cartItem) {
     (this.cartItems.get(userId))[0] = {
@@ -76,11 +77,11 @@ groupOrderSchema.methods.addItem = function (userId, userName, item) {
         },
       ],
     };
-  } else { 
+  } else {
     // console.log("here" ,(this.cartItems.get(userId))[0].items) ;
     const existingItem = (this.cartItems.get(userId))[0].items.find(
       (Item) => Item.itemID == item.itemID
-    );  
+    );
     // console.log(existingItem);
     if (existingItem) {
       existingItem.quantity += 1;
@@ -93,50 +94,53 @@ groupOrderSchema.methods.addItem = function (userId, userName, item) {
         imageLink: item.imageLink,
       });
     }
-    this.save().then(()=>{  
+    this.save().then(() => {
       // console.log(this.cartItems) ;
-      return this.cartItems }) ; 
+      return this.cartItems
+    });
   }
 };
 
-groupOrderSchema.methods.addCartToGroup = function (cart, userId , userName) {
+groupOrderSchema.methods.addCartToGroup = function (cart, userId, userName) {
   // console.log(userId);
-  this.cartItems.set( userId ,{
+  this.cartItems.set(userId, {
     userId: userId,
     userName: userName,
     items: cart.orderItems
   });
   // console.log(this.cartItems) ;
-  this.save().then(()=>{  
-  // console.log(this.cartItems) ;
-  return this.cartItems }) ; 
+  this.save().then(() => {
+    // console.log(this.cartItems) ;
+    return this.cartItems
+  });
 };
 
 groupOrderSchema.methods.removeItem = function (userId, userName, item) {
-  const cartItem = this.cartItems.get(userId); 
+  const cartItem = this.cartItems.get(userId);
   // console.log(car)
   if (cartItem) {
     const index = (this.cartItems.get(userId))[0].items.findIndex(
       (Item) => Item.itemID === item.itemID
-    ); 
+    );
     // console.log(index) ; 
-    if (index !== -1) { 
+    if (index !== -1) {
 
-     ( this.cartItems.get(userId))[0].items[index].quantity -= 1;
+      (this.cartItems.get(userId))[0].items[index].quantity -= 1;
 
-      if ((this.cartItems.get(userId))[0].items[index].quantity  <= 0) {
+      if ((this.cartItems.get(userId))[0].items[index].quantity <= 0) {
         (this.cartItems.get(userId))[0].items.splice(index, 1);
       }
-      this.save().then(()=>{  
+      this.save().then(() => {
         // console.log(this.cartItems) ;
-        return this.cartItems }) ; 
+        return this.cartItems
+      });
     }
   }
   return Promise.resolve(this);
 };
 
-groupOrderSchema.methods.deleteItem = function (userId, userName, item) { 
-  const cartItem = this.cartItems.get(userId);  
+groupOrderSchema.methods.deleteItem = function (userId, userName, item) {
+  const cartItem = this.cartItems.get(userId);
   // console.log("here", cartItem) ; 
   if (cartItem) {
     const index = (this.cartItems.get(userId))[0].items.findIndex(
@@ -144,23 +148,25 @@ groupOrderSchema.methods.deleteItem = function (userId, userName, item) {
     );
     if (index !== -1) {
       (this.cartItems.get(userId))[0].items.splice(index, 1);
-      this.save().then(()=>{  
+      this.save().then(() => {
         // console.log(this.cartItems) ;
-        return this.cartItems }) ; 
+        return this.cartItems
+      });
     }
-    
+
   }
   return Promise.resolve(this);
 };
 
-groupOrderSchema.methods.deleteCart = function (userId, userName)  {
-  const cartItem = this.cartItems.get(userId); 
+groupOrderSchema.methods.deleteCart = function (userId, userName) {
+  const cartItem = this.cartItems.get(userId);
   // console.log(cartItem) ;
   if (cartItem) {
-    this.cartItems.delete(userId); 
-    this.save().then(()=>{  
+    this.cartItems.delete(userId);
+    this.save().then(() => {
       // console.log(this.cartItems) ;
-      return this.cartItems }) ; 
+      return this.cartItems
+    });
   }
   return Promise.resolve(this);
 };
