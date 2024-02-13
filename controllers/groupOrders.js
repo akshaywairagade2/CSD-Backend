@@ -53,6 +53,20 @@ exports.joinGroup = async (req, res) => {
     }
 };
 
+exports.fetchGroup = async (req, res) => {
+    const { groupId } = req.body;
+    const group = await Groups.findOne({ groupId: groupId });
+    if (!group) {
+        return res.status(400).json({ msg: "Group Not Found" })
+    }
+    try {
+        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: group });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: error });
+    }
+};
+
 exports.addItem = catchAsyncError(async (req, res, next) => {
     const { groupId, userId, userName, item } = req.body;
     const group = await Groups.findOne({ groupId: groupId });
@@ -300,7 +314,7 @@ exports.getGroupOrderByHotel = async (req, res) => {
         else {
             let orders = [];
             hotelGroupOrders.forEach(group => {
-                if (group.hotelId === hotelId) {
+                if (group.hotelId === hotelId && group.orderStatus !== "ORDER_PENDING") {
 
                     const userId = group.adminId;
                     const groupName = group.groupName

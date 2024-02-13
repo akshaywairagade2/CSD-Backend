@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createGroup,
   joinGroup,
+  fetchGroup,
   addItem,
   removeItem,
   deleteItem,
@@ -19,6 +20,7 @@ const router = express.Router();
 
 router.post("/createGroup", createGroup);
 router.post("/joinGroup", joinGroup);
+router.post("/fetchgroup", fetchGroup);
 router.post("/groups/addItem", addItem);
 router.post("/groups/removeItem", removeItem);
 router.post("/groups/deleteItem", deleteItem);
