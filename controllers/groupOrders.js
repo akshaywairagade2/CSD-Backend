@@ -55,12 +55,15 @@ exports.joinGroup = async (req, res) => {
 
 exports.fetchGroup = async (req, res) => {
     const { groupId } = req.body;
-    const group = await Groups.findOne({ groupId: groupId });
+    const group = await Groups.findOne({ groupId: groupId });   
     if (!group) {
         return res.status(400).json({ msg: "Group Not Found" })
     }
     try {
-        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: group });
+        const cart = JSON.stringify(group.cartItems) ;  
+        console.log(JSON.parse(cart)) ; 
+        
+        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: JSON.parse(cart) });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ msg: error });
