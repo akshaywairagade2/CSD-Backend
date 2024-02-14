@@ -60,10 +60,15 @@ exports.fetchGroup = async (req, res) => {
         return res.status(400).json({ msg: "Group Not Found" })
     }
     try {
-        const cart = JSON.stringify(group.cartItems) ;  
-        console.log(JSON.parse(cart)) ; 
+        const cart = group.cartItems;   
+        const admin = group.adminId ; 
+        var temp = [] ;   
+        console.log()
+        cart.forEach((ele)=>{temp.push([...ele]) }) ; 
+        console.log(cart) 
+        console.log(temp) ; 
         
-        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: JSON.parse(cart) });
+        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: temp[0] , adminId: admin });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ msg: error });
