@@ -167,13 +167,16 @@ exports.addCartToGroup = catchAsyncError(async (req, res, next) => {
     const { groupId, cartId, userId, userName } = req.body;
     const group = await Groups.findOne({ groupId: groupId });
     const cart = await Cart.findOne({ _id: cartId });
-
-
     if (!cart) {
         return next(new ErrorHandler("cart not found", 404));
     }
     if (!group) {
         return next(new ErrorHandler("Group not found", 404));
+    } 
+    const userIndex = await group.userIds.findIndex( ele  => ele === userId) ; 
+    console.log(userIndex) ; 
+    if(userIndex === -1){ 
+        return next(new ErrorHandler("User not found", 404));
     }
     //  console.log(group);
 
