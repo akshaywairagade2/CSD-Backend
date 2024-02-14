@@ -4,7 +4,7 @@ const ErrorHandler = require('../utils/errorhandler');
 const { getItem, getCart } = require("./../services/groupCartOrder");
 const Cart = require("../models/cartOrders");
 exports.createGroup = async (req, res) => {
-    const { hotelId, userName, userId, groupId, groupName } = req.body;
+    const { hotelId, userName, userId, groupId, groupName, hotelName } = req.body;
     const userIds = [userId];
     const adminId = userId;
     const cartItemsForUser = [];
@@ -16,6 +16,7 @@ exports.createGroup = async (req, res) => {
             groupId,
             groupName,
             userIds,
+            hotelName,
             cartItems: new Map(),
         });
 
@@ -55,33 +56,33 @@ exports.joinGroup = async (req, res) => {
 
 exports.fetchGroup = async (req, res) => {
     const { groupId } = req.body;
-    const group = await Groups.findOne({ groupId: groupId });   
+    const group = await Groups.findOne({ groupId: groupId });
     if (!group) {
         return res.status(400).json({ msg: "Group Not Found" })
     }
     try {
-        const cart = group.cartItems;   
-        const admin = group.adminId ; 
-        var temp = [] ;     
-        var indv  = [];
-        var total = 0; 
+        const cart = group.cartItems;
+        const admin = group.adminId;
+        var temp = [];
+        var indv = [];
+        var total = 0;
         console.log()
-        cart.forEach((ele)=>{  
-            var indvtotal = 0 ; 
-            var t =  [...ele]; 
-            console.log() ; 
-            t[0].items.forEach((item)=>{ 
-                  indvtotal += item.price*item.quantity ; 
-            }) ;  
-            
-            total += indvtotal ; 
-            console.log("here", t[0].indvtotal) 
-            temp.push(t[0]) ; 
-            indv.push(indvtotal) ; 
-         }) ; 
-        console.log(temp) ; 
-        
-        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: temp , adminId: admin , total:total , indvtotal: indv });
+        cart.forEach((ele) => {
+            var indvtotal = 0;
+            var t = [...ele];
+            console.log();
+            t[0].items.forEach((item) => {
+                indvtotal += item.price * item.quantity;
+            });
+
+            total += indvtotal;
+            console.log("here", t[0].indvtotal)
+            temp.push(t[0]);
+            indv.push(indvtotal);
+        });
+        console.log(temp);
+
+        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: temp, adminId: admin, total: total, indvtotal: indv });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ msg: error });
@@ -185,10 +186,10 @@ exports.addCartToGroup = catchAsyncError(async (req, res, next) => {
     }
     if (!group) {
         return next(new ErrorHandler("Group not found", 404));
-    } 
-    const userIndex = await group.userIds.findIndex( ele  => ele === userId) ; 
-    console.log(userIndex) ; 
-    if(userIndex === -1){ 
+    }
+    const userIndex = await group.userIds.findIndex(ele => ele === userId);
+    console.log(userIndex);
+    if (userIndex === -1) {
         return next(new ErrorHandler("User not found", 404));
     }
     //  console.log(group);

@@ -17,11 +17,16 @@ const groupOrderSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+
   userIds: [
     {
       type: String,
     },
   ],
+  hotelName: {
+    type: String,
+    required: false,
+  },
   cartItems: {
     type: Map,
     of: [
