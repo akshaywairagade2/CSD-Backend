@@ -157,7 +157,7 @@ exports.login = async (req, res) => {
                 msg: "User loggedIn Successfully",
                 User: {
                     _id: user._id,
-                    username: user.userName,
+                    userName: user.userName,
                     emailId: user.emailId,
                     role: user.role
                 },
