@@ -62,13 +62,26 @@ exports.fetchGroup = async (req, res) => {
     try {
         const cart = group.cartItems;   
         const admin = group.adminId ; 
-        var temp = [] ;   
+        var temp = [] ;     
+        var indv  = [];
+        var total = 0; 
         console.log()
-        cart.forEach((ele)=>{temp.push([...ele]) }) ; 
-        console.log(cart) 
+        cart.forEach((ele)=>{  
+            var indvtotal = 0 ; 
+            var t =  [...ele]; 
+            console.log() ; 
+            t[0].items.forEach((item)=>{ 
+                  indvtotal += item.price*item.quantity ; 
+            }) ;  
+            
+            total += indvtotal ; 
+            console.log("here", t[0].indvtotal) 
+            temp.push(t[0]) ; 
+            indv.push(indvtotal) ; 
+         }) ; 
         console.log(temp) ; 
         
-        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: temp[0] , adminId: admin });
+        return res.status(201).json({ msg: "Cart Fetched Successfully", cart: temp , adminId: admin , total:total , indvtotal: indv });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ msg: error });
