@@ -228,7 +228,7 @@ const verifymailsenderonaccountcreation = async (email, hashPassword, id) => {
         const token = jwt.sign({ email: email, id: id }, secret, {
             expiresIn: "4h"
         })
-        const link = `http://localhost:3000/verifymailonaccountcreation/${id}/${token}`;
+        const link = `https://iitbh-campus-delivery.netlify.app/verifymailonaccountcreation/${id}/${token}`;
         var transporter = await nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -325,7 +325,7 @@ exports.forgotpassword = async (req, res) => {
             const token = jwt.sign({ email: user.emailId, id: user._id }, secret, {
                 expiresIn: "5m"
             })
-            const link = `http://localhost:3000/reset-password/${user._id}/${token}`;
+            const link = `https://iitbh-campus-delivery.netlify.app/reset-password/${user._id}/${token}`;
             var transporter = await nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
