@@ -69,7 +69,7 @@ exports.signup = async (req, res) => {
 
     } else {
 
-        const { userName, emailId, password } = req.body;
+        const { userName, emailId, password, mobilenumber, address } = req.body;
 
         if (!userName || !emailId || !password) {
             return res.status(400).json({ msg: "Please Enter all the Fields" });
@@ -95,7 +95,9 @@ exports.signup = async (req, res) => {
             emailId,
             hashPassword,
             role,
-            isVerified
+            isVerified,
+            address,
+            mobilenumber
         });
 
         const token = jwt.sign({
@@ -159,7 +161,9 @@ exports.login = async (req, res) => {
                     _id: user._id,
                     userName: user.userName,
                     emailId: user.emailId,
-                    role: user.role
+                    role: user.role,
+                    mobilenumber: user.mobilenumber,
+                    address: user.address
                 },
                 Token: { token }
             });
@@ -224,7 +228,7 @@ const verifymailsenderonaccountcreation = async (email, hashPassword, id) => {
         const token = jwt.sign({ email: email, id: id }, secret, {
             expiresIn: "4h"
         })
-        const link = `https://iitbh-campus-delivery.netlify.app/verifymailonaccountcreation/${id}/${token}`;
+        const link = `http://localhost:3000/verifymailonaccountcreation/${id}/${token}`;
         var transporter = await nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -321,7 +325,7 @@ exports.forgotpassword = async (req, res) => {
             const token = jwt.sign({ email: user.emailId, id: user._id }, secret, {
                 expiresIn: "5m"
             })
-            const link = `https://iitbh-campus-delivery.netlify.app/reset-password/${user._id}/${token}`;
+            const link = `http://localhost:3000/reset-password/${user._id}/${token}`;
             var transporter = await nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
@@ -329,7 +333,7 @@ exports.forgotpassword = async (req, res) => {
                     pass: 'djlhryfqbkxezfgh'
                 }
             });
-            s
+
             var mailOptions = {
                 from: 'youremail@gmail.com',
                 to: emailId,
@@ -414,3 +418,44 @@ exports.getHotels = async (req, res, next) => {
         })
     }
 }
+
+
+exports.userinfo = async (req, res) => {
+    const { id } = req.body;
+
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+        return res.status(400).json({ msg: "User Not Found" });
+    }
+
+    try {
+        return res.status(201).json({ msg: "User Info Fetched Successfully", info: user });
+    } catch (error) {
+        return res.status(400).json({ msg: "Unable to fetch info" });
+    }
+};
+
+exports.edituserinfo = async (req, res) => {
+    const { id, userName, mobilenumber, address, description } = req.body;
+
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+        return res.status(400).json({ msg: "User Not Found" });
+    }
+
+    try {
+        await User.updateOne({
+            _id: id,
+        }, {
+            $set: {
+                userName: userName,
+                mobilenumber: mobilenumber,
+                address: address,
+                description: description
+            }
+        })
+        return res.status(201).json({ msg: "User Info Updated Successfully", info: user });
+    } catch (error) {
+        return res.status(400).json({ msg: "Unable to fetch info" });
+    }
+};
