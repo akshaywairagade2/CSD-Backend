@@ -379,6 +379,22 @@ exports.getGroupOrderByUser = async (req, res) => {
     }
 }
 
+exports.getGroupByUser = async (req, res) => {
+    const { userId, hotelId } = req.body
+    try {
+        const userGroups = await Groups.find({ userIds: userId, hotelId: hotelId });
+        if (!userGroups) {
+            return res.status(400).json({ msg: "No such user exists" });
+        }
+        else {
+            return res.status(201).json({ msg: "Orders fetched successfully", userGroups: userGroups });
+        }
+    }
+    catch (error) {
+        return res.status(400).json({ msg: "Something went wrong", err: error });
+    }
+}
+
 exports.getGroupOrderByHotel = async (req, res) => {
 
     const { hotelId } = req.body
@@ -392,7 +408,7 @@ exports.getGroupOrderByHotel = async (req, res) => {
         else {
             let orders = [];
             hotelGroupOrders.forEach(group => {
-                console.log(group, "groupppppppppppppppp")
+                // console.log(group, "groupppppppppppppppp")
                 if (group.hotelId === hotelId && group.orderStatus !== "ORDER_PENDING") {
 
 

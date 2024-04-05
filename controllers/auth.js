@@ -327,7 +327,7 @@ exports.forgotpassword = async (req, res) => {
             const token = jwt.sign({ email: user.emailId, id: user._id }, secret, {
                 expiresIn: "5m"
             })
-            const link = `https://iitbh-campus-delivery.onrender.com//reset-password/${user._id}/${token}`;
+            const link = `https://iitbh-campus-delivery.onrender.com/reset-password/${user._id}/${token}`;
             var transporter = await nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
