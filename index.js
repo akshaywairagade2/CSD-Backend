@@ -6,8 +6,10 @@ var cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const Logger = require('./logs/log');
+const rateLimiter = require('./middlewares/rateLimiter');
 
 
+app.use(rateLimiter);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('tiny'));
 env.config();
